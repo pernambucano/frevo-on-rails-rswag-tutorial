@@ -40,9 +40,9 @@ Follow the installation process in their repos: [rspec-rails](https://github.com
 
 ### Create our first test
 
-As we are doing TDD here, we will start with a test for an endpoint that will return the list of books. We will surely have no book at the start, but it is the easiest way to start, and don't worry, we will develop a way to insert books later.
+As we are doing TDD here, we will start with a test for an endpoint that will return the list of books. We will surely have no book at the start, but it is the easiest way go, and we will find a way to insert books later.
 
-Rswag can generate the base code we will work on:
+Rswag can generate the base code for us:
 
 ```bash
 rails generate rspec:swagger BookController
@@ -76,7 +76,7 @@ We will read it line by line to understand some basic components before we dive 
     end
 ```
 
-First of all, we import the swagger_helper. This is a config file created by rswag, and creates the basic structure for our swagger.yaml.
+At the very first line, we import the swagger_helper. This is a config file created by rswag, and creates the basic structure for our swagger.yaml.
 
 What is this swagger.yaml  I'm talking about? Well, it is the document that follows the OpenApi Standards. It is the specifications for your api, the contract between you, the creator, and all your users. It is also possible to create a beautiful Rest Client UI with it. We will talk more about this later.
 
