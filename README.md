@@ -16,7 +16,7 @@ simple rest api that will list all the books available! Pretty neat, huh?
 
 ## Step-to-Step
 
-### Prerequisits
+### Prerequisites
 
 Have ruby and rails installed. I used docker to create this project, but you could just as easily to the same outside docker.
 
