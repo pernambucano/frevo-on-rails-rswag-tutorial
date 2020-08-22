@@ -1,0 +1,31 @@
+version: '2.4'
+services:
+  mariadb:
+    image: 'docker.io/bitnami/mariadb:10.3-debian-10'
+    environment:
+      - ALLOW_EMPTY_PASSWORD=yes
+
+  app: &app
+    stdin_open: true
+    tty: true
+    image: docker.io/bitnami/rails:6-debian-10
+    environment:
+      - DATABASE_HOST=mariadb
+      - DATABASE_NAME=my_app_development
+    depends_on:
+      - mariadb
+    volumes:
+      - .:/app:cached
+
+  runner:
+    <<: *app
+    command: /bin/bash 
+    ports:
+      - '3000:3000'
+
+  rails:
+    <<: *app 
+    working_dir: /app/${DIR_APP}
+    command: bundle exec rails server -b 0.0.0.0
+    ports:
+      - '3000:3000'
