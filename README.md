@@ -177,7 +177,7 @@ If you take a closer look at that error message, you will see that it is not und
     require 'swagger_helper'
 
     describe 'Books API' do 
-        path '/api/books' do
+        path '/books' do
             get 'List all available books' do
                 produces 'application/json'
                 response '200', 'books listed' do
@@ -186,7 +186,7 @@ If you take a closer look at that error message, you will see that it is not und
                         { type: :object,
                             properties: {
                                 name: { type: :string },
-                                author: { type: :string }
+                                author: { type: :string },
                             },
                             required: ["name"]}
                     ]
