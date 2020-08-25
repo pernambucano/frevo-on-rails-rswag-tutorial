@@ -19,6 +19,7 @@ services:
 
   runner:
     <<: *app
+    working_dir: /app/${DIR_APP}
     command: /bin/bash 
     ports:
       - '3000:3000'

@@ -26,6 +26,12 @@ To run this project locally using docker, just run this:
 DIR_APP=bookstore docker-compose up rails 
 ```
 
+To access the bash inside ( to run tests, for example):
+
+```bash
+DIR_APP=bookstore docker-compose run runner
+``` 
+
 ### Create a new rails api-only project.
 
 ```bash
@@ -98,8 +104,7 @@ Now that we have the basics working, let's add an validation inside our test.
                     schema type: :object,
                     properties: {
                         name: { type: :string },
-                        author: { type: :string },
-                        price: { type: :integer }
+                        author: { type: :string }
                     },
                     required: ["name"]
 
@@ -181,15 +186,14 @@ If you take a closer look at that error message, you will see that it is not und
             get 'List all available books' do
                 produces 'application/json'
                 response '200', 'books listed' do
-                    schema oneOf: [
-                        { type: :array },
-                        { type: :object,
+                    schema type: :array, items: {
+                            type: :object,
                             properties: {
-                                name: { type: :string },
-                                author: { type: :string },
+                                    name: { type: :string },
+                                    author: { type: :string },
+                                },
                             },
-                            required: ["name"]}
-                    ]
+                            required: ["name"]
 
                     run_test!
                 end
@@ -198,7 +202,7 @@ If you take a closer look at that error message, you will see that it is not und
     end
 ```
 
-The important part here is the "oneOf" keyword. It allows us to give many schemas to rswag, and if the response is in one of these formats it should be fine. Let's see.
+Here, we are expecting to receive an array. It can be an empty array too, but if it is not empty, it should have the schema of books that we described before (including the need for a name).
 
 ![success 1](/images/success_1.png)
 
@@ -215,6 +219,36 @@ Wait... What about when we have books, will it work ok too? Only one way to figu
         name: Harry Potter and the Goblet of Fire
         author: J.K. Rowling
 ```
+
+Add the following to the begining of the test ( after the first describe):
+
+```ruby
+require 'swagger_helper'
+
+    describe 'Books API' do 
+        fixtures :all
+
+        path '/books' do
+            get 'List all available books' do
+                produces 'application/json'
+                response '200', 'books listed' do
+                    schema type: :array, items: {
+                            type: :object,
+                            properties: {
+                                    name: { type: :string },
+                                    author: { type: :string },
+                                },
+                            },
+                            required: ["name"]
+
+                    run_test!
+                end
+            end
+        end
+    end
+```
+
+Let's see the result.
 
 ![success 2](/images/success_2.png)
 
