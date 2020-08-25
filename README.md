@@ -101,12 +101,14 @@ Now that we have the basics working, let's add an validation inside our test.
             get 'List all available books' do
                 produces 'application/json'
                 response '200', 'books listed' do
-                    schema type: :object,
-                    properties: {
-                        name: { type: :string },
-                        author: { type: :string }
-                    },
-                    required: ["name"]
+                    schema type: :array, items: {
+                            type: :object,
+                            properties: {
+                                    name: { type: :string },
+                                    author: { type: :string },
+                                },
+                            },
+                            required: ["name"]
 
                     run_test!
                 end
@@ -117,7 +119,7 @@ Now that we have the basics working, let's add an validation inside our test.
 
 By now, you already can ready most of the code. Here, we added the "schema". Let me tell you something, this is the best part of the standard. We define how we want the response in a format that is organized, simple, and concise. Try reading it before I explain it, I'll wait. 
 
-In our schema, we defined that our response will be an object (in json, this means something between curly braces). Inside these curly braces we'll have a name, and an author. Notice that right at the end we say that we want at least the name of the book. 
+In our schema, we defined that our response will be an array of objects. Inside these objects we'll have a name, and an author. Notice that right at the end we say that we want at least the name of the book. 
 
 Now that we have a nice test, let's run it!
 
@@ -147,21 +149,21 @@ But, why are we not implementing it yet?? Well, baby steps young grasshoper, bab
 
 ![error 3](/images/error_3.png)
 
-Cool, now we now that we are returning a 204 (no content) code, but we want a 200! Let return something then. 
+Cool, now we now that we are returning a 204 (no content) code, but we want a 200! Lets return something then. 
 
 ```ruby
     class BooksController < ApplicationController
         def index
-            render json: {}
+            render json: []
         end
     end
 ```
 
 Then we would see this: 
 
-![error 4](/images/error_4.png)
+![error 4](/images/success_1.png)
 
-WOW. Now we are talking. We need to return something that is a json, and has at least a name attribute, in other words, our test is telling us what we need to do step by step. How cool is that? 
+WOW. Now we are talking. We are expecting an array of books, but an empty list is a valid return as well because we didn't specify a minimum size for this list. Now that we have something Green, lets refactor it!
 
 ```ruby
     class BooksController < ApplicationController
@@ -172,37 +174,7 @@ WOW. Now we are talking. We need to return something that is a json, and has at 
     end
 ```
 
-This gives the following error: 
-
-![error 5](/images/error_5.png)
-
-If you take a closer look at that error message, you will see that it is not understanding what we are returning: an array. I didn't want to show you this before you were ready and more confortable reading error message after error message. The point here is that our test is too simple, and since this is a schema-based test, we are allowed to go a little further.
-
-```ruby
-    require 'swagger_helper'
-
-    describe 'Books API' do 
-        path '/books' do
-            get 'List all available books' do
-                produces 'application/json'
-                response '200', 'books listed' do
-                    schema type: :array, items: {
-                            type: :object,
-                            properties: {
-                                    name: { type: :string },
-                                    author: { type: :string },
-                                },
-                            },
-                            required: ["name"]
-
-                    run_test!
-                end
-            end
-        end
-    end
-```
-
-Here, we are expecting to receive an array. It can be an empty array too, but if it is not empty, it should have the schema of books that we described before (including the need for a name).
+This gives the following:
 
 ![success 1](/images/success_1.png)
 
@@ -294,7 +266,7 @@ This is much more realistic, right?
 
 ![swagger ui 1](/images/swagger_ui_1.png) 
 
-If you want to have this specifications in one place but prefer to use another client, you can get the swagger.yaml from this path: "http://localhost:3000/api-docs/v1/swagger.yaml". Pretty much every rest api client can read this, including Postman.
+If you want to have this specification in one place but prefer to use another client, you can get the swagger.yaml from this path: "http://localhost:3000/api-docs/v1/swagger.yaml". Pretty much every rest api client can read this, including Postman.
 
 TODO: Add post endpoint here
 
